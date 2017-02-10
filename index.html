@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8">  
+        <title>Simple Chat</title>
+    </head>
+    <body>
+        <div id="app">
+            <ul id="chat">
+                <li v-for="message in messages">
+                    {{ message }}
+                </li>
+            </ul>
+            <form v-on:submit="send">
+                <input id="message" v-model="message" autocomplete="off" />
+                <button>Send</button>
+            </form>
+        </div>
+        <script src="/socket.io/socket.io.js"></script> 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+        <script>
+            var socket = io();
+            var vm = new Vue({
+                el: '#app',
+                data: {
+                    messages: [],
+                    message : null
+                },
+                
+                mounted: function() {
+                    socket.on('message', function (msg) {
+                        this.messages.push(msg);
+                    }.bind(this));
+                },
+                
+                methods: {
+                    send: function(e) {
+                        e.preventDefault();
+                        var msg = this.message;
+                        socket.emit('message', msg);
+                        this.message = null;
+                    }
+                }
+            });
+        
+        
+            
+            
+        </script>
+    </body>
+</html>
